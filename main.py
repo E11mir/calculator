@@ -92,6 +92,9 @@ def rpn(str):
         '*': 2,
         '/': 2
     }
+    for i in notation:
+        if is_operator(i):
+            print(operations_priority[i])
 
     #сделать преобразование из обычной записи в обратную польскую запись
     return result
