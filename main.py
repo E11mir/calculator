@@ -66,16 +66,15 @@ if split_notation("34+54") == ["34", "+", "54"]:
     print('okey')
 else:
     print('failed')
-print(split_notation("34+54"))
 
 if split_notation("304+54") == ["304", "+", "54"]:
     print('okey')
 else:
     print('failed')
 
-print(split_notation("304+54"))
 
-#304+54*2 должно проеобразоваться в 304542*+
+
+# 304+54*2 должно проеобразоваться в 304542*+
 # 1. i=304 добавляем в стек операндов
 # 2. i=+ добавляем в стек операций
 # 3. i=54 добавляем в стек операндов
@@ -84,6 +83,7 @@ print(split_notation("304+54"))
 # в стеке операндов :  304,54,2
 # в стекее операций : *,+
 def rpn(str):
+    stack_operators = []
     result = []
     notation = split_notation(str)
     operations_priority = {
@@ -93,18 +93,54 @@ def rpn(str):
         '/': 2
     }
     for i in notation:
+        if is_number(i):
+            result.append(i)
+            if len(stack_operators) > 0 and operations_priority[stack_operators[-1]] == 2 :
+                result.append(stack_operators.pop())
         if is_operator(i):
-            print(operations_priority[i])
-
-    #сделать преобразование из обычной записи в обратную польскую запись
+            stack_operators.append(i)
+    
+    while len(stack_operators) > 0:
+        result.append(stack_operators.pop())
     return result
 
 
-
-if rpn("304+54") == ["304", "54", "+"]:
+if rpn("12 * 3 / 4 + 3 - 2") == ['12', '3', '*', '4', '/', '3', '+', '2', '-']:
     print('okey')
 else:
-    print('failed')
+    print('Failed')
 
-print(rpn("304+54"))
+print(rpn("12 * 3 / 4 + 3 - 2"))
 
+def execute_operator(operand_left, operand_right, operator):
+    left = int(operand_left)
+    right = int(operand_right)
+    if operator == '-':
+        return left - right
+    if operator == '+':
+        return left + right
+    if operator == '*':
+        return left * right
+    if operator == '/':
+        return left / right
+
+if execute_operator("1" , "2", "-") == - 1:
+    print('okey')
+else: 
+    print('Failed')
+
+def calculate(str):
+    notation = rpn(str)
+    print(notation)
+    stack_operands = []
+    for i in notation:
+        if is_number(i):
+            notation.append(i)
+        if is_operator(i):
+            operand_right = stack_operands.pop()
+            operand_left = stack_operands.pop()
+            result = execute_operator(operand_left, operand_right, i)
+            stack_operands.append(result)
+    return stack_operands.pop()
+
+print(calculate("12 * 3 / 4 + 3 - 2"))
